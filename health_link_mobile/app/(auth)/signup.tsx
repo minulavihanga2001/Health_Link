@@ -93,13 +93,12 @@ export default function SignupScreen() {
         console.log('Server Error Data:', err.response.data);
         console.log('Server Error Status:', err.response.status);
 
-        if (err.response.status === 409 || err.response.status === 403) {
+        if (err.response.status === 409) {
           errorMessage = 'This email is already registered. Please log in or use a different email.';
         } else if (err.response.status === 400 && typeof err.response.data === 'string' && err.response.data.includes('email')) {
-
           errorMessage = err.response.data;
         } else {
-          errorMessage = err.response.data?.message || `Server Error (${err.response.status})`;
+          errorMessage = err.response.data?.message || err.response.data || `Server Error (${err.response.status})`;
         }
       } else if (err.request) {
 

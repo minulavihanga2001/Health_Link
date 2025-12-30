@@ -28,6 +28,7 @@ public class User implements UserDetails {
     private boolean isActive = false;
     private String verificationCode;
     private java.time.LocalDateTime verificationExpiresAt;
+    private boolean isVerificationComplete = false;
 
     // Profile Fields
     private String nic;

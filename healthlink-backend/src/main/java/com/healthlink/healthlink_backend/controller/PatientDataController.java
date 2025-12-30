@@ -42,6 +42,7 @@ public class PatientDataController {
         currentUser.setDob(request.getDob());
         currentUser.setGender(request.getGender());
         currentUser.setAddress(request.getAddress());
+        currentUser.setVerificationComplete(true);
 
         userRepo.save(currentUser);
 

@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setToken(storedToken);
           // Placeholder: Extract user info (role/id) from token payload for state
           // For simplicity, we just set a dummy user state:
-          setUser({ id: 'dummy_id', name: 'User', role: 'PATIENT', isActive: true });
+          setUser({ id: 'dummy_id', name: 'User', role: 'PATIENT', isActive: true, isVerificationComplete: true });
         }
       } catch (error) {
         console.error('Error loading token from SecureStore:', error);
@@ -54,13 +54,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (payload: LoginReqDTO) => {
     try {
       const response = await login(payload);
+      console.log("DEBUG: AuthContext SignIn Response:", JSON.stringify(response, null, 2));
 
       // Store token securely
       await SecureStore.setItemAsync(TOKEN_KEY, response.token);
 
       // Update state
       setToken(response.token);
-      setUser({ id: response.id, name: response.name, role: response.role, isActive: response.isActive });
+      setUser({ id: response.id, name: response.name, role: response.role, isActive: response.isActive, isVerificationComplete: response.isVerificationComplete });
 
       // Navigate is handled by the hook below (useAuthRedirect)
     } catch (error) {
@@ -88,7 +89,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: response.id,
         name: response.name,
         role: response.role,
-        isActive: response.isActive
+        isActive: response.isActive,
+        isVerificationComplete: response.isVerificationComplete
       });
     } catch (error) {
       console.error('Error saving token:', error);
@@ -145,9 +147,13 @@ export function useAuthRedirect() {
 
       if ((inAuthGroup && !isVerifyScreen) || inRoot) {
         if (user.role === 'PATIENT') {
-          router.replace('/patient/secondVerification' as any);
+          if (user.isVerificationComplete) {
+            router.replace('/patient/dashboard' as any);
+          } else {
+            router.replace('/patient/secondVerification' as any);
+          }
         } else if (user.role === 'PHARMACIST') {
-          router.replace('/(pharmacist)/pharmacist/welcome' as any);
+          router.replace('/pharmacist/welcome' as any);
         } else {
           // Fallback if role is unknown, though this shouldn't happen with valid users
           // Maybe stay on root if no role? But for now assuming valid roles.

@@ -31,7 +31,8 @@ public class AuthService {
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
             if (existingUser.isActive()) {
-                throw new IllegalStateException("Email is already taken!");
+                throw new IllegalStateException("Email is already taken! Existing User ID: " + existingUser.getId()
+                        + ", Active: " + existingUser.isActive());
             }
             // User exists but is not verified. Update details and resend OTP.
             user = existingUser;
@@ -103,7 +104,8 @@ public class AuthService {
                 token,
                 savedUser.getRole().name(),
                 savedUser.getName(),
-                savedUser.isActive());
+                savedUser.isActive(),
+                savedUser.isVerificationComplete());
     }
 
     public void resendVerificationCode(String email) {
@@ -152,6 +154,7 @@ public class AuthService {
                 token,
                 user.getRole().name(),
                 user.getName(),
-                user.isActive());
+                user.isActive(),
+                user.isVerificationComplete());
     }
 }

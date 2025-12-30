@@ -56,7 +56,8 @@ export default function LoginScreen() {
         password
       };
 
-      await signIn(loginPayload);
+      const response = await signIn(loginPayload);
+      console.log("DEBUG: Login Response:", JSON.stringify(response, null, 2));
 
     } catch (err: any) {
       console.log('Login Error:', err);
@@ -77,7 +78,7 @@ export default function LoginScreen() {
   };
 
   const handleForgotPassword = () => {
-    
+
     console.log('Forgot password clicked');
   };
 
@@ -110,7 +111,7 @@ export default function LoginScreen() {
             </View>
           </TouchableOpacity>
 
-          
+
           <View className="mb-8">
             <Text className="text-3xl font-bold text-gray-900">
               Welcome Back
@@ -120,16 +121,16 @@ export default function LoginScreen() {
             </Text>
           </View>
 
-          
+
           {error ? (
             <View className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
               <Text className="text-red-700 font-medium">{error}</Text>
             </View>
           ) : null}
 
-          
+
           <View className="space-y-4">
-            
+
             <View>
               <Text className="text-gray-700 font-semibold mb-2">Email Address</Text>
               <TextInput
@@ -147,7 +148,7 @@ export default function LoginScreen() {
                 editable={!loading}
               />
             </View>
-           
+
             <View>
               <View className="flex-row justify-between items-center mb-2">
                 <Text className="text-gray-700 font-semibold">Password</Text>
@@ -213,7 +214,7 @@ export default function LoginScreen() {
             <View className="flex-1 h-px bg-gray-300" />
           </View>
 
-        
+
           <View className="space-y-3">
             <TouchableOpacity
               className="py-4 border-2 border-gray-300 rounded-xl flex-row justify-center items-center"
@@ -231,7 +232,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          
+
           <View className="mt-10 flex-row justify-center items-center">
             <Text className="text-gray-600 text-base">Don't have an account? </Text>
             <TouchableOpacity
@@ -244,7 +245,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-         
+
           <View className="mt-8 bg-blue-50 p-4 rounded-xl">
             <View className="flex-row items-start">
               <Text className="text-2xl mr-2">🔒</Text>

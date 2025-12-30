@@ -18,6 +18,7 @@ export interface AuthResponseDTO {
   role: 'PATIENT' | 'DOCTOR' | 'PHARMACIST' | 'ADMIN';
   name: string;
   isActive: boolean;
+  isVerificationComplete: boolean;
 }
 
 // --- Configuration ---

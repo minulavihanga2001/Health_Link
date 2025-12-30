@@ -12,5 +12,10 @@ public class AuthResponseDTO {
     private String token;
     private String role;
     private String name;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("isActive")
     private boolean isActive;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("isVerificationComplete")
+    private boolean isVerificationComplete;
 }
