@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setToken(storedToken);
           // Placeholder: Extract user info (role/id) from token payload for state
           // For simplicity, we just set a dummy user state:
-          setUser({ id: 'dummy_id', name: 'User', role: 'PATIENT', isActive: true, isVerificationComplete: true });
+          setUser({ id: 'dummy_id', name: 'User', email: 'dummy@email.com', role: 'PATIENT', isActive: true, isVerificationComplete: true, healthId: 'HL-PNT00' });
         }
       } catch (error) {
         console.error('Error loading token from SecureStore:', error);
@@ -61,7 +61,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Update state
       setToken(response.token);
-      setUser({ id: response.id, name: response.name, role: response.role, isActive: response.isActive, isVerificationComplete: response.isVerificationComplete });
+      setUser({
+        id: response.id,
+        name: response.name,
+        email: response.email,
+        role: response.role,
+        isActive: response.isActive,
+        isVerificationComplete: response.isVerificationComplete,
+        healthId: response.healthId
+      });
 
       // Navigate is handled by the hook below (useAuthRedirect)
     } catch (error) {
@@ -88,9 +96,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser({
         id: response.id,
         name: response.name,
+        email: response.email,
         role: response.role,
         isActive: response.isActive,
-        isVerificationComplete: response.isVerificationComplete
+        isVerificationComplete: response.isVerificationComplete,
+        healthId: response.healthId
       });
     } catch (error) {
       console.error('Error saving token:', error);

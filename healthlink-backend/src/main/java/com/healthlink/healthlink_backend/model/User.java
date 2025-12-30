@@ -22,6 +22,7 @@ public class User implements UserDetails {
     @Id
     private String id;
     private String name;
+    private String healthId;
     private String email;
     private String password;
     private Role role;
@@ -36,6 +37,14 @@ public class User implements UserDetails {
     private java.time.LocalDate dob;
     private String gender;
     private String address;
+    private java.util.List<String> allergies;
+    private String maritalStatus;
+    private String guardianName;
+    private String guardianContact;
+    private String profileImage;
+    private String bloodGroup;
+    private Double height;
+    private Double weight;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -15,4 +15,12 @@ public class PatientProfileReqDTO {
     private LocalDate dob;
     private String gender;
     private String address;
+    private java.util.List<String> allergies;
+    private String maritalStatus;
+    private String guardianName;
+    private String guardianContact;
+    private String profileImage;
+    private String bloodGroup;
+    private Double height;
+    private Double weight;
 }

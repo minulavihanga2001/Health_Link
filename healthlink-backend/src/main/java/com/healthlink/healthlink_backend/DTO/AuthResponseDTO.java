@@ -12,6 +12,8 @@ public class AuthResponseDTO {
     private String token;
     private String role;
     private String name;
+    private String email;
+    private String healthId;
 
     @com.fasterxml.jackson.annotation.JsonProperty("isActive")
     private boolean isActive;

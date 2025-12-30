@@ -17,6 +17,8 @@ export interface AuthResponseDTO {
   token: string;
   role: 'PATIENT' | 'DOCTOR' | 'PHARMACIST' | 'ADMIN';
   name: string;
+  email: string;
+  healthId: string;
   isActive: boolean;
   isVerificationComplete: boolean;
 }
@@ -66,5 +68,26 @@ export const login = async (data: LoginReqDTO): Promise<AuthResponseDTO> => { //
     return response.data;
   } catch (error) {
     throw error;
+  }
+};
+
+export interface ChangePasswordReqDTO {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}
+
+export const changePassword = async (data: ChangePasswordReqDTO) => {
+  try {
+    const response = await api.post('/auth/change-password', data);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      if (typeof error.response.data === 'string') {
+        throw new Error(error.response.data);
+      }
+      throw new Error(error.response.data.message || 'Failed to change password');
+    }
+    throw new Error('Network error or server not reachable');
   }
 };

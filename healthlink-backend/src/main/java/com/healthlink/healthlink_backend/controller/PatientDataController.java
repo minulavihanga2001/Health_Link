@@ -30,6 +30,13 @@ public class PatientDataController {
         return ResponseEntity.ok(message);
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<User> getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(currentUser);
+    }
+
     @org.springframework.web.bind.annotation.PostMapping("/complete-profile")
     public ResponseEntity<String> completeProfile(
             @org.springframework.web.bind.annotation.RequestBody com.healthlink.healthlink_backend.DTO.PatientProfileReqDTO request) {
@@ -42,7 +49,21 @@ public class PatientDataController {
         currentUser.setDob(request.getDob());
         currentUser.setGender(request.getGender());
         currentUser.setAddress(request.getAddress());
+        currentUser.setAllergies(request.getAllergies());
+        currentUser.setMaritalStatus(request.getMaritalStatus());
+        currentUser.setGuardianName(request.getGuardianName());
+        currentUser.setGuardianContact(request.getGuardianContact());
+        if (request.getProfileImage() != null) {
+            currentUser.setProfileImage(request.getProfileImage());
+        }
         currentUser.setVerificationComplete(true);
+        currentUser.setVerificationComplete(true);
+        if (request.getBloodGroup() != null)
+            currentUser.setBloodGroup(request.getBloodGroup());
+        if (request.getHeight() != null)
+            currentUser.setHeight(request.getHeight());
+        if (request.getWeight() != null)
+            currentUser.setWeight(request.getWeight());
 
         userRepo.save(currentUser);
 

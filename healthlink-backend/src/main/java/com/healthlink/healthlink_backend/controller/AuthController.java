@@ -1,6 +1,7 @@
 package com.healthlink.healthlink_backend.controller;
 
 import com.healthlink.healthlink_backend.DTO.AuthResponseDTO;
+import com.healthlink.healthlink_backend.DTO.ChangePasswordReqDTO;
 import com.healthlink.healthlink_backend.DTO.LoginReqDTO;
 import com.healthlink.healthlink_backend.DTO.SignupReqDTO;
 import com.healthlink.healthlink_backend.service.AuthService;
@@ -44,5 +45,11 @@ public class AuthController {
         AuthResponseDTO response = authService.login(request);
         // The response contains the token and the user's role (PATIENT, DOCTOR, etc.)
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordReqDTO request) {
+        authService.changePassword(request);
+        return ResponseEntity.ok("Password changed successfully.");
     }
 }

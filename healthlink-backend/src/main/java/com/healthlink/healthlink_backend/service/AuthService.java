@@ -1,6 +1,7 @@
 package com.healthlink.healthlink_backend.service;
 
 import com.healthlink.healthlink_backend.DTO.AuthResponseDTO;
+import com.healthlink.healthlink_backend.DTO.ChangePasswordReqDTO;
 import com.healthlink.healthlink_backend.DTO.LoginReqDTO;
 import com.healthlink.healthlink_backend.DTO.SignupReqDTO;
 import com.healthlink.healthlink_backend.model.Role;
@@ -22,6 +23,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final SequenceService sequenceService;
 
     @org.springframework.transaction.annotation.Transactional
     public void signup(SignupReqDTO signupReq) {
@@ -47,6 +49,21 @@ public class AuthService {
             user.setName(signupReq.getName());
             user.setRole(signupReq.getRole() != null ? signupReq.getRole() : Role.PATIENT);
             user.setActive(false);
+
+            // Generate Health ID
+            String rolePrefix;
+            if (user.getRole() == Role.PATIENT) {
+                rolePrefix = "HL-PNT";
+            } else if (user.getRole() == Role.PHARMACIST) {
+                rolePrefix = "HL-PHM";
+            } else if (user.getRole() == Role.DOCTOR) {
+                rolePrefix = "HL-DCT";
+            } else {
+                rolePrefix = "HL-USR";
+            }
+            int seq = sequenceService.getNextSequence(user.getRole().name());
+            String healthId = String.format("%s%02d", rolePrefix, seq);
+            user.setHealthId(healthId);
         }
 
         // Generate OTP
@@ -104,6 +121,8 @@ public class AuthService {
                 token,
                 savedUser.getRole().name(),
                 savedUser.getName(),
+                savedUser.getEmail(),
+                savedUser.getHealthId(),
                 savedUser.isActive(),
                 savedUser.isVerificationComplete());
     }
@@ -154,7 +173,21 @@ public class AuthService {
                 token,
                 user.getRole().name(),
                 user.getName(),
+                user.getEmail(),
+                user.getHealthId(),
                 user.isActive(),
                 user.isVerificationComplete());
+    }
+
+    public void changePassword(ChangePasswordReqDTO request) {
+        User user = userRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Incorrect old password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepo.save(user);
     }
 }
