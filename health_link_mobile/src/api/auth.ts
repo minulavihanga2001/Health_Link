@@ -1,4 +1,5 @@
-import axios from 'axios';
+import client from './client';
+// API_URL is now handled in client.ts via BASE_URL
 
 export interface SignupReqDTO {
   name: string;
@@ -23,23 +24,11 @@ export interface AuthResponseDTO {
   isVerificationComplete: boolean;
 }
 
-// --- Configuration ---
-export const API_URL = 'http://192.168.8.162:8080/api/v1'; // Adjusted baseURL to match new API paths
-
-const api = axios.create({ // Renamed authApi to api
-
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 15000,
-});
-
-// --- 4. API Calls ---
+// --- API Calls ---
 
 export const signup = async (data: SignupReqDTO): Promise<void> => {
   try {
-    await api.post('/auth/signup', data); // Changed return type to void, removed response.data
+    await client.post('/auth/signup', data);
   } catch (error) {
     throw error;
   }
@@ -47,7 +36,7 @@ export const signup = async (data: SignupReqDTO): Promise<void> => {
 
 export const verifyUser = async (email: string, code: string): Promise<AuthResponseDTO> => {
   try {
-    const response = await api.post<AuthResponseDTO>('/auth/verify', { email, verificationCode: code });
+    const response = await client.post<AuthResponseDTO>('/auth/verify', { email, verificationCode: code });
     return response.data;
   } catch (error) {
     throw error;
@@ -56,15 +45,15 @@ export const verifyUser = async (email: string, code: string): Promise<AuthRespo
 
 export const resendOtp = async (email: string): Promise<void> => {
   try {
-    await api.post('/auth/resend-otp', { email });
+    await client.post('/auth/resend-otp', { email });
   } catch (error) {
     throw error;
   }
 }
 
-export const login = async (data: LoginReqDTO): Promise<AuthResponseDTO> => { // Changed payload to data
+export const login = async (data: LoginReqDTO): Promise<AuthResponseDTO> => {
   try {
-    const response = await api.post<AuthResponseDTO>('/auth/login', data);
+    const response = await client.post<AuthResponseDTO>('/auth/login', data);
     return response.data;
   } catch (error) {
     throw error;
@@ -79,7 +68,7 @@ export interface ChangePasswordReqDTO {
 
 export const changePassword = async (data: ChangePasswordReqDTO) => {
   try {
-    const response = await api.post('/auth/change-password', data);
+    const response = await client.post('/auth/change-password', data);
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {

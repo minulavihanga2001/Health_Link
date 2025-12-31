@@ -11,12 +11,13 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { getProfile, PatientProfileDTO } from '@/src/api/patient';
 
+
 const LOGO_img = require('../../../assets/logo_only.png');
 
 export default function PatientDashboard() {
     const { user } = useAuth();
     const router = useRouter();
-    const [profile, setProfile] = useState<PatientProfileDTO | null>(null);
+    const [fullProfile, setFullProfile] = useState<PatientProfileDTO | null>(null);
     const [showQrModal, setShowQrModal] = useState(false);
 
     useFocusEffect(
@@ -24,7 +25,7 @@ export default function PatientDashboard() {
             const fetchProfileData = async () => {
                 try {
                     const data = await getProfile();
-                    setProfile(data);
+                    setFullProfile(data);
                 } catch (error) {
                     console.log('Error fetching profile:', error);
                 }
@@ -36,9 +37,7 @@ export default function PatientDashboard() {
         }, [user])
     );
 
-    const qrData = profile
-        ? `Name: ${user?.name || ''}\nDOB: ${profile.dob || 'N/A'}\nAddress: ${profile.address || 'N/A'}\nMarital Status: ${profile.maritalStatus || 'N/A'}\nHealth ID: ${user?.id || ''}`
-        : `${user?.id || 'HealthLink-ID'}`;
+    const qrData = `HEALTHLINK:PATIENT:${user?.healthId || user?.id}`;
 
 
     return (
@@ -51,8 +50,14 @@ export default function PatientDashboard() {
                 </View>
                 <View className="flex-row gap-3">
                     <TouchableOpacity
+                        className="bg-blue-400 p-3 rounded-full shadow-sm"
+                        onPress={() => router.push('/scanner/scan')}
+                    >
+                        <Ionicons name="scan" size={24} color="white" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         className="bg-white p-3 rounded-full shadow-sm"
-                        onPress={() => { }} // Notification placeholder
+                        onPress={() => { }}
                     >
                         <Ionicons name="notifications-outline" size={24} color="#374151" />
                     </TouchableOpacity>
@@ -60,9 +65,9 @@ export default function PatientDashboard() {
                         onPress={() => router.push('/patient/profile')}
                         className="bg-blue-50 p-1 rounded-full border border-blue-100 overflow-hidden w-12 h-12 justify-center items-center"
                     >
-                        {profile?.profileImage ? (
+                        {fullProfile?.profileImage ? (
                             <Image
-                                source={{ uri: profile.profileImage }}
+                                source={{ uri: fullProfile.profileImage }}
                                 className="w-full h-full rounded-full"
                                 resizeMode="cover"
                             />
@@ -78,8 +83,8 @@ export default function PatientDashboard() {
                 colors={['#1e3a8a', '#10b981']} // Blue-900 to Emerald-500
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                className="p-6 shadow-lg shadow-blue-900 mb-6"
-                style={{ borderRadius: 24, overflow: 'hidden' }}
+                className="shadow-lg shadow-blue-900 mb-6"
+                style={{ borderRadius: 24, overflow: 'hidden', padding: 24 }}
             >
                 {/* Header: Logo & Verified Badge */}
                 <View className="flex-row justify-between items-start mb-6">

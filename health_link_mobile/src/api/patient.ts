@@ -1,6 +1,4 @@
-import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
-import { API_URL } from './auth';
+import client from './client';
 
 export interface PatientProfileDTO {
     nic: string;
@@ -18,27 +16,9 @@ export interface PatientProfileDTO {
     weight?: number;
 }
 
-// Helper to get token
-const getToken = async () => {
-    return await SecureStore.getItemAsync('healthlink_jwt');
-};
-
-const getHeaders = async () => {
-    const token = await getToken();
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-    };
-};
-
 export const getProfile = async (): Promise<any> => {
     try {
-        const headers = await getHeaders();
-        // Since we don't have the user ID easily accessible here for the URL param in /patient/{id}/records,
-        // we'll rely on the new /profile endpoint which uses the token.
-        // Wait, did I create /profile in PatientDataController? Yes.
-        // It resides at /api/v1/patient/profile
-        const response = await axios.get(`${API_URL}/patient/profile`, { headers });
+        const response = await client.get('/patient/profile');
         return response.data;
     } catch (error) {
         throw error;
@@ -47,8 +27,7 @@ export const getProfile = async (): Promise<any> => {
 
 export const updateProfile = async (data: PatientProfileDTO): Promise<any> => {
     try {
-        const headers = await getHeaders();
-        const response = await axios.post(`${API_URL}/patient/complete-profile`, data, { headers });
+        const response = await client.post('/patient/complete-profile', data);
         return response.data;
     } catch (error) {
         throw error;

@@ -29,14 +29,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
-
-    //Password Encoder
+    // Password Encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    //Authentication Provider
+    // Authentication Provider
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
@@ -44,29 +43,31 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    //Authentication Manager (Used by AuthService to manually trigger the login verification)
+    // Authentication Manager (Used by AuthService to manually trigger the login
+    // verification)
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    //Security Filter Chain
+    // Security Filter Chain
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsService userDetailsService)
+            throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // Permit access to the login/signup endpoints
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         // All other endpoints are protected (will require JWT)
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 // Session management is STATELESS (required for JWT)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider(userDetailsService));
 
         // ADDITION: Integrate the JWT Filter into the security chain
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Use the filter before the default token processing
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Use the filter before the
+                                                                                         // default token processing
 
         return http.build();
     }
